@@ -1,6 +1,5 @@
 from django.db import models
 
-from users.models import User
 from .validators import year_validator
 
 
@@ -67,6 +66,7 @@ class Title(models.Model):
     )
 
     class Meta():
+        ordering = ('year')
         verbose_name = 'title'
         verbose_name_plural = 'titles'
 

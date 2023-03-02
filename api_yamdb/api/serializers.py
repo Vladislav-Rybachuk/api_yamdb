@@ -31,7 +31,7 @@ class ReviewSerializer(serializers.ModelSerializer):
                 message='Пользователь может оставить только один отзыв на произведение'
             )
         ]
-    
+
     def create(self, validated_data):
         title = validated_data.pop('title_id')
         review = Review.objects.create(title=title, **validated_data)
@@ -39,13 +39,11 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(slug_field='username', read_only=True)
+    author = serializers.SlugRelatedField(
+        slug_field='username', read_only=True
+    )
 
     class Meta:
         model = Comment
         fields = ('id', 'text', 'author', 'pub_date')
         read_only_fields = ('id', 'pub_date')
-
-    def create(self, validated_data):
-        validated_data['author'] = self.context['request'].user
-        return super().create(validated_data)

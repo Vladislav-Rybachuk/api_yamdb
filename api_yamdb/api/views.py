@@ -10,7 +10,7 @@ from .serializers import (CategorySerializer, GenreSerializer,
                           TitleSerializer,)
 
 
-class GenreVieSet(ListCreateDeleteViewSet):
+class GenreViewSet(ListCreateDeleteViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     lookup_field = 'slug'
@@ -40,7 +40,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
-        rating=Avg('reviews_score', output_field=PositiveSmallIntegerField())
+        rating=Avg('reviews__score', output_field=PositiveSmallIntegerField())
     )
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend,)

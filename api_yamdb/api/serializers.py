@@ -6,7 +6,10 @@ from users.serializers import UserSerializer
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True,
+        default=serializers.CurrentUserDefault())
     title_id = serializers.PrimaryKeyRelatedField(
         queryset=Title.objects.all(),
         source='title',
@@ -28,7 +31,8 @@ class ReviewSerializer(serializers.ModelSerializer):
             UniqueTogetherValidator(
                 queryset=Review.objects.all(),
                 fields=['title', 'author'],
-                message='Пользователь может оставить только один отзыв на произведение'
+                message='Пользователь может оставить'
+                        'только один отзыв на произведение'
             )
         ]
 

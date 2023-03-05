@@ -1,13 +1,15 @@
 from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework import status
+from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
-from users.serializers import SignUpUserSerializer, GetJwtTokenSerializer
+from .permissions import IsAdministator
+from users.serializers import SignUpUserSerializer, GetJwtTokenSerializer, UserSerializer
 
 
 def get_tokens_for_user(user):
@@ -47,3 +49,19 @@ def get_jwt_token(request):
             User, username=request.data.get('username'))
         return Response(get_tokens_for_user(current_user))
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@permission_classes([permissions.IsAuthenticated, IsAdministator])
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = "username"
+
+    def get_object(self):
+        username = self.kwargs.get('username')
+
+        if username == 'me' and self.request.method == 'GET':
+            return self.request.user
+
+        current_user = get_object_or_404(User, username=username)
+        return current_user

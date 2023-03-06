@@ -39,4 +39,4 @@ class IsAdminModeratorAuthorPermission(permissions.BasePermission):
                 or request.user.is_moderator
             )
         raise CustomValidation(
-            "Вы не авторизрваны!", 'token', status.HTTP_401_UNAUTHORIZED)
+            "Вы не авторизованы!", 'token', status.HTTP_401_UNAUTHORIZED)

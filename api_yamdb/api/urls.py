@@ -20,9 +20,9 @@ router_v1.register(
     CommentViewSet,
     basename='comments'
 )
-router_v1.register(r'genres', GenreViewSet, basename='genre')
-router_v1.register(r'categories', CategoryViewSet, basename='category')
-router_v1.register(r'title', TitleViewSet, basename='title')
+router_v1.register('genres', GenreViewSet, basename='genre')
+router_v1.register('categories', CategoryViewSet, basename='category')
+router_v1.register('title', TitleViewSet, basename='title')
 
 urlpatterns = [
     path('api/v1/', include(router_v1.urls)),

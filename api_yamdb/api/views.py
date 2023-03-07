@@ -1,10 +1,10 @@
 from django.db.models import Avg, PositiveSmallIntegerField
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework.backends import DjangoFilterBackend
-from rest_framework.pagination import LimitOffsetPagination
 from  rest_framework import filters, status, viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+from django_filters.rest_framework.backends import DjangoFilterBackend
+from rest_framework.pagination import LimitOffsetPagination
 
 from reviews.models import Category, Genre, Review, Title, Comment
 from .mixins import ListCreateDeleteViewSet
@@ -17,6 +17,7 @@ from .serializers import (CategorySerializer, GenreSerializer,
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (IsAdminModeratorAuthorPermission,)
+
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
@@ -47,6 +48,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         review_id = self.kwargs.get('review_id')
         review = get_object_or_404(Review, id=review_id, title_id=title_id)
         serializer.save(author=self.request.user, review=review)
+
 
 class GenreViewSet(ListCreateDeleteViewSet):
     queryset = Genre.objects.all()

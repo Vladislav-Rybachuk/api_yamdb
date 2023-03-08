@@ -1,19 +1,23 @@
 from django.db.models import Avg, PositiveSmallIntegerField
 from django.shortcuts import get_object_or_404
 from  rest_framework import filters, status, viewsets
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.pagination import LimitOffsetPagination
 
-from reviews.models import Category, Genre, Review, Title
+from reviews.models import Category, Genre, Review, Title, Comment
 from .mixins import ListCreateDeleteViewSet
-from .serializers import (CategorySerializer, GenreSerializer,
-                          TitleSerializer,)
+from .permissions import IsAdminModeratorAuthorPermission, IsAdminPermission
+from .serializers import (CategorySerializer, GenreSerializer, 
+                          TitleSerializer, ReviewSerializer, 
+                          CommentSerializer)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = []
+    permission_classes = (IsAdminModeratorAuthorPermission,)
+
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
@@ -30,7 +34,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = []
+    permission_classes = (IsAdminModeratorAuthorPermission,)
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
@@ -52,7 +56,7 @@ class GenreViewSet(ListCreateDeleteViewSet):
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    #permission_classes = (IsAdminPermission,)
+    permission_classes = (IsAdminPermission,)
 
     def retrieve(self, request, slug=None):
         if not Genre.objects.filter(slug=slug).count():
@@ -66,7 +70,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    #permission_classes = (IsAdminPermission,)
+    permission_classes = (IsAdminPermission,)
 
     def retrieve(self, request, slug=None):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -80,6 +84,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     )
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend,)
-    #permission_classes = ()
+    permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
 
     

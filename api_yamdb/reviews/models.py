@@ -133,6 +133,6 @@ class Title(models.Model):
     )
 
     class Meta():
-        ordering = ('year')
+        ordering = ('year',)
         verbose_name = 'title'
         verbose_name_plural = 'titles'

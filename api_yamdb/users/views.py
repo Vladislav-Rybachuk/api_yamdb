@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
-from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -9,7 +9,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
 from .permissions import IsAdministator
-from users.serializers import SignUpUserSerializer, GetJwtTokenSerializer, UserSerializer
+from users.serializers import (SignUpUserSerializer,
+                               GetJwtTokenSerializer,
+                               UserSerializer)
 
 
 def get_tokens_for_user(user):
@@ -60,7 +62,8 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_object(self):
         username = self.kwargs.get('username')
 
-        if username == 'me' and self.request.method == 'GET':
+        if username == 'me' and (self.request.method == 'GET' or
+                                 self.request.method == 'PATCH'):
             return self.request.user
 
         current_user = get_object_or_404(User, username=username)

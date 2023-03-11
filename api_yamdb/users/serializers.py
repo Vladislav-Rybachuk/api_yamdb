@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from .models import User, ROLES
-
+import re
 
 class SignUpUserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150, required=True)
@@ -16,6 +16,23 @@ class SignUpUserSerializer(serializers.Serializer):
                                    write_only=True)
     bio = serializers.CharField(required=False)
 
+    def validate(self, data):
+        if (re.match("^[\w.@+-]+\Z", data.get('username'))) is None:
+            raise serializers.ValidationError(
+                'Имя пользователя не соответствует шаблону')
+
+        if data.get('username') == 'me':
+            raise serializers.ValidationError(
+                'Имя пользователя не может быть me')
+
+        if User.objects.filter(email=data.get('email')).exists():
+            raise serializers.ValidationError(
+                'Пользователь с такой почтой уже существует')
+
+        if User.objects.filter(username=data.get('username')).exists():
+            raise serializers.ValidationError(
+                'Пользователь с таким именем уже существует')
+        return data
 
 class GetJwtTokenSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=256, required=True)
@@ -33,3 +50,17 @@ class UserSerializer(serializers.ModelSerializer):
                 fields=('email', 'username')
             )
         ]
+
+    def validate(self, data):
+        if data.get('username') == 'me':
+            raise serializers.ValidationError(
+                'Имя пользователя не может быть me')
+
+        if User.objects.filter(email=data.get('email')).exists():
+            raise serializers.ValidationError(
+                'Пользователь с такой почтой уже существует')
+
+        if User.objects.filter(username=data.get('username')).exists():
+            raise serializers.ValidationError(
+                'Пользователь с таким именем уже существует')
+        return data

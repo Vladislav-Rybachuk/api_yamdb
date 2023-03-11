@@ -6,7 +6,6 @@ from users.views import sign_up_user, get_jwt_token, UserViewSet
 app_name = 'users'
 
 router = DefaultRouter()
-# Вызываем метод .register с нужными параметрами
 router.register('users', UserViewSet, basename='users')
 
 urlpatterns = [

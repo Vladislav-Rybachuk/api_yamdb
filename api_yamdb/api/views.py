@@ -78,6 +78,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, slug=None):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
         rating=Avg('reviews__score', output_field=PositiveSmallIntegerField())

@@ -3,6 +3,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from .models import User, ROLES
 import re
 
+
 class SignUpUserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150, required=True)
     email = serializers.EmailField(allow_blank=False,
@@ -17,13 +18,18 @@ class SignUpUserSerializer(serializers.Serializer):
     bio = serializers.CharField(required=False)
 
     def validate(self, data):
-        if (re.match("^[\w.@+-]+\Z", data.get('username'))) is None:
+        if (re.match(r"^[\w.@+-]+\Z", data.get('username'))) is None:
             raise serializers.ValidationError(
                 'Имя пользователя не соответствует шаблону')
 
         if data.get('username') == 'me':
             raise serializers.ValidationError(
                 'Имя пользователя не может быть me')
+
+        if (User.objects.filter(email=data.get('email')).exists()
+                and User.objects.filter(
+                username=data.get('username')).exists()):
+            return data
 
         if User.objects.filter(email=data.get('email')).exists():
             raise serializers.ValidationError(
@@ -34,9 +40,9 @@ class SignUpUserSerializer(serializers.Serializer):
                 'Пользователь с таким именем уже существует')
         return data
 
+
 class GetJwtTokenSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=256, required=True)
-    confirmation_code = serializers.CharField(required=True)
 
 
 class UserSerializer(serializers.ModelSerializer):

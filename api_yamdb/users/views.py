@@ -15,7 +15,7 @@ from users.serializers import (SignUpUserSerializer,
                                GetJwtTokenSerializer,
                                UserSerializer)
 
-
+# Create your views here.
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
 

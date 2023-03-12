@@ -24,11 +24,13 @@ class IsOwnerPermission(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if request.user.is_authenticated:
-            return request.user ==obj
+            return request.user == obj
         return False
 
 
 class IsAdministator(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        return  view.kwargs.get('username') == 'me' or request.user.is_admin()
+        return (view.kwargs.get('username') == 'me'
+                or request.user.is_admin()
+                or request.user.is_superuser)

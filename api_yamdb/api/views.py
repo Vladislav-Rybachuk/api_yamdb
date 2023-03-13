@@ -17,7 +17,7 @@ from .serializers import (CategorySerializer, GenreSerializer,
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (IsAdminModeratorAuthorPermission,)
-    pagination_class = LimitOffsetPagination
+    #pagination_class = LimitOffsetPagination
 
     def get_title(self):
         title_id = self.kwargs.get('title_id')
@@ -34,8 +34,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (IsAdminModeratorAuthorPermission,)
-    pagination_class = LimitOffsetPagination
-
+    
     def get_review(self):
         title_id = self.kwargs.get('title_id')
         review_id = self.kwargs.get('review_id')

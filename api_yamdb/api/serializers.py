@@ -15,7 +15,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     title_id = serializers.PrimaryKeyRelatedField(
         queryset=Title.objects.all(),
         source='title',
-        write_only=True
+        #write_only=True
     )
     title = serializers.SlugRelatedField(
         slug_field='name',
@@ -27,7 +27,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ('id', 'text', 'author', 'score', 'pub_date', 'title')
+        fields = ('id', 'text', 'author', 'score', 'pub_date', 'title_id', 'title')
         read_only_fields = ('id', 'author', 'title', 'pub_date')
         validators = [
             UniqueTogetherValidator(
@@ -69,8 +69,8 @@ class CategorySerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 
-class TitleSerializer(serializers.ModelSerializer):
-    rating = serializers.IntegerField()
+class TitleBaseSerializer(serializers.ModelSerializer):
+    rating = serializers.IntegerField(read_only=True)
     genre = GenreSerializer(read_only=True, many=True)
     category = CategorySerializer(read_only=True)
 
@@ -78,7 +78,20 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title 
         fields = ('id', 'name', 'year', 'rating',
                   'description', 'genre', 'category')
+
+
+class TitlePostSerializer(serializers.ModelSerializer):
+        genre = serializers.SlugRelatedField(many=True, slug_field='slug',
+                                             queryset=Genre.objects.all()
+                                             )
+        category = serializers.SlugRelatedField(slug_field='slug',
+                                                queryset=Category.objects.all()
+                                                )
         
+        class Meta:
+            model = Title
+            fields = ('id', 'name', 'year', 'description', 'genre', 'category')
+            
         def validate_year(self, value):
             current_year = timezone.now().year
             if 0 < value > current_year:

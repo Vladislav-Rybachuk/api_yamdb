@@ -10,8 +10,8 @@ from reviews.models import Category, Genre, Review, Title, Comment
 from .mixins import ListCreateDeleteViewSet
 from .permissions import IsAdminModeratorAuthorPermission, IsAdminPermission
 from .serializers import (CategorySerializer, GenreSerializer, 
-                          TitleSerializer, ReviewSerializer, 
-                          CommentSerializer)
+                          TitleBaseSerializer, ReviewSerializer, 
+                          CommentSerializer, TitlePostSerializer)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -83,8 +83,12 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
         rating=Avg('reviews__score', output_field=PositiveSmallIntegerField())
     )
-    serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend,)
     permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
-
     
+    def get_serializer_class(self):
+        if self.action in ('create', 'update', 'partial_update'):
+            return TitlePostSerializer
+        return TitleBaseSerializer
+    
+

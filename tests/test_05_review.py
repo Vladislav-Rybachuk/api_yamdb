@@ -21,6 +21,8 @@ class Test05ReviewAPI:
         new_data = {'text': 'new_text', 'score': 7}
 
         response = client.get(f'/api/v1/titles/{titles[0]["id"]}/reviews/')
+        print(response.status_code)
+        print(response.content)
         assert response.status_code != HTTPStatus.NOT_FOUND, (
             'Эндпоинт `/api/v1/titles/{title_id}/reviews/` не найден, '
             'проверьте настройки в *urls.py*.'
@@ -34,6 +36,8 @@ class Test05ReviewAPI:
         response = client.post(
             f'/api/v1/titles/{titles[0]["id"]}/reviews/', data=new_data
         )
+        print(response.status_code)
+        print(response.content)
         assert response.status_code == HTTPStatus.UNAUTHORIZED, (
             'Проверьте, что POST-запрос неавторизованного пользователя к '
             '`/api/v1/titles/{title_id}/reviews/` возвращает ответ со '
@@ -44,6 +48,8 @@ class Test05ReviewAPI:
             f'/api/v1/titles/{titles[0]["id"]}/reviews/{reviews[1]["id"]}/',
             data=new_data
         )
+        print(response.status_code)
+        print(response.content)
         assert response.status_code == HTTPStatus.UNAUTHORIZED, (
             'Проверьте, что PATCH-запрос неавторизованного пользователя к '
             '`/api/v1/titles/{title_id}/reviews/{review_id}/` возвращает '
@@ -53,6 +59,8 @@ class Test05ReviewAPI:
         response = client.delete(
             f'/api/v1/titles/{titles[0]["id"]}/reviews/{reviews[1]["id"]}/'
         )
+        print(response.status_code)
+        print(response.content)
         assert response.status_code == HTTPStatus.UNAUTHORIZED, (
             'Проверьте, что DELETE-запрос неавторизованного пользователя к '
             '`/api/v1/titles/{{title_id}}/reviews/{{review_id}}/` возвращает '

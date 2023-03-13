@@ -10,40 +10,27 @@ from reviews.models import Category, Comment, Genre, Review, Title
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         slug_field='username',
-        read_only=True,
-        default=serializers.CurrentUserDefault())
-    title_id = serializers.PrimaryKeyRelatedField(
-        queryset=Title.objects.all(),
-        source='title',
-        #write_only=True
-    )
-    title = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-    text = serializers.CharField()
-    score = serializers.IntegerField(min_value=1, max_value=10)
-    pub_date = serializers.DateTimeField(read_only=True)
-
+        read_only=True)
+    
+    
+    
     class Meta:
         model = Review
-        fields = ('id', 'text', 'author', 'score', 'pub_date', 'title_id', 'title')
-        read_only_fields = ('id', 'author', 'title', 'pub_date')
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Review.objects.all(),
-                fields=['title', 'author'],
-                message='Пользователь может оставить'
-                        'только один отзыв на произведение'
-            )
-        ]
-
-    def create(self, validated_data):
-        title = validated_data.pop('title_id')
-        review = Review.objects.create(title=title, **validated_data)
-        return review
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
+        
+        
+    
+    def validate (self, data):
+        if self.context['request'].method != 'POST':
+            return data
+        title_id = self.context['view'].kwargs.get('title_id')
+        author = self.context['request'].user
+        if Review.objects.filter(author=author, title=title_id).exists():
+            raise serializers.ValidationError
+        return data
 
 
+    
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         slug_field='username', read_only=True

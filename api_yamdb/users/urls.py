@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from users.views import sign_up_user, get_jwt_token, UserViewSet
 from api.views import (CommentViewSet, ReviewViewSet,
-                    CategoryViewSet, GenreViewSet, TitleViewSet)
+                       CategoryViewSet, GenreViewSet, TitleViewSet)
 
 
 app_name = 'users'

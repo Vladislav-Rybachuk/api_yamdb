@@ -9,7 +9,6 @@ class TitleFilter(django_filters.FilterSet):
     year = django_filters.NumberFilter(field_name='year')
     name = django_filters.CharFilter(field_name='name', lookup_expr='contains')
 
-
     class Meta:
-        model = Title 
+        model = Title
         fields = ('genre', 'category')

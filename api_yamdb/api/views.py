@@ -9,7 +9,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from reviews.models import Category, Genre, Review, Title, Comment
 from .mixins import ListCreateDeleteViewSet
 from .filters import TitleFilter
-from .permissions import IsAdminModeratorAuthorPermission, IsAdminPermission
+from .permissions import IsAdminModeratorAuthorPermission, IsAdminOrReadOnlyPermission
 from .serializers import (CategorySerializer, GenreSerializer, 
                           TitleBaseSerializer, ReviewSerializer, 
                           CommentSerializer, TitlePostSerializer)
@@ -56,7 +56,7 @@ class GenreViewSet(ListCreateDeleteViewSet):
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    permission_classes = (IsAdminPermission,)
+    permission_classes = (IsAdminOrReadOnlyPermission,)
 
     def retrieve(self, request, slug=None):
         if not Genre.objects.filter(slug=slug).count():
@@ -70,7 +70,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    permission_classes = (IsAdminPermission,)
+    permission_classes = (IsAdminOrReadOnlyPermission,)
 
     def retrieve(self, request, slug=None):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -85,7 +85,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     )
     filter_backends = (DjangoFilterBackend,)
     filter_class = TitleFilter
-    permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
+    permission_classes = (IsAdminOrReadOnlyPermission, IsAuthenticatedOrReadOnly)
     
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update'):

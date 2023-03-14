@@ -10,6 +10,7 @@ ROLES = (
 
 
 class User(AbstractUser):
+    
     bio = models.TextField(
         'Биография',
         blank=True,
@@ -29,3 +30,8 @@ class User(AbstractUser):
         if self.role == 'moderator':
             return True
         return False
+
+    def is_user(self):
+        if self.role == 'user':
+            return True
+        return False 

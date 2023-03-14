@@ -5,7 +5,6 @@ from .views import (CommentViewSet, ReviewViewSet,
                     CategoryViewSet, GenreViewSet, TitleViewSet)
 
 
-
 app_name = 'api'
 
 router_v1 = DefaultRouter()

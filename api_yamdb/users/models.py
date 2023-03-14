@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 ROLES = (
     ('user', 'user'),
     ('moderator', 'moderator'),
@@ -10,7 +11,18 @@ ROLES = (
 
 
 class User(AbstractUser):
-    
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+    SUPERUSER = 'superuser'
+
+    ROLES = [
+        (USER, 'user'),
+        (MODERATOR, 'moderator'),
+        (ADMIN, 'admin'),
+        (SUPERUSER, 'superuser'),
+    ]
+
     bio = models.TextField(
         'Биография',
         blank=True,
@@ -18,20 +30,17 @@ class User(AbstractUser):
     role = models.CharField(
         max_length=10,
         choices=ROLES,
-        default='user',
+        default=USER,
     )
 
+    @property
     def is_admin(self):
-        if self.role == 'admin' or self.role == 'superuser':
-            return True
-        return False
+        return self.role == self.ADMIN
 
+    @property
     def is_moderator(self):
-        if self.role == 'moderator':
-            return True
-        return False
+        return self.role == self.MODERATOR
 
+    @property
     def is_user(self):
-        if self.role == 'user':
-            return True
-        return False 
+        return self.role == self.USER

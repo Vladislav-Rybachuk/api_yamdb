@@ -1,17 +1,18 @@
 from django.db.models import Avg, PositiveSmallIntegerField
 from django.shortcuts import get_object_or_404
-from  rest_framework import filters, status, viewsets
+from rest_framework import filters, status, viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.pagination import LimitOffsetPagination
 
-from reviews.models import Category, Genre, Review, Title, Comment
+from reviews.models import Category, Genre, Review, Title
 from .mixins import ListCreateDeleteViewSet
 from .filters import TitleFilter
-from .permissions import IsAdminModeratorAuthorPermission, IsAdminOrReadOnlyPermission
-from .serializers import (CategorySerializer, GenreSerializer, 
-                          TitleBaseSerializer, ReviewSerializer, 
+from .permissions import (IsAdminModeratorAuthorPermission,
+                          IsAdminOrReadOnlyPermission)
+from .serializers import (CategorySerializer, GenreSerializer,
+                          TitleBaseSerializer, ReviewSerializer,
                           CommentSerializer, TitlePostSerializer)
 
 
@@ -35,7 +36,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (IsAdminModeratorAuthorPermission,)
-    
+
     def get_review(self):
         title_id = self.kwargs.get('title_id')
         review_id = self.kwargs.get('review_id')
@@ -62,7 +63,7 @@ class GenreViewSet(ListCreateDeleteViewSet):
         if not Genre.objects.filter(slug=slug).count():
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().retrieve(self, request, slug)
-    
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -74,7 +75,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, slug=None):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
+
     def partial_update(self, request, slug=None):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -85,11 +86,10 @@ class TitleViewSet(viewsets.ModelViewSet):
     )
     filter_backends = (DjangoFilterBackend,)
     filter_class = TitleFilter
-    permission_classes = (IsAdminOrReadOnlyPermission, IsAuthenticatedOrReadOnly)
-    
+    permission_classes = (
+        IsAdminOrReadOnlyPermission, IsAuthenticatedOrReadOnly)
+
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update'):
             return TitlePostSerializer
         return TitleBaseSerializer
-    
-

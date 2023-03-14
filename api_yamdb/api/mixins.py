@@ -8,4 +8,4 @@ class ListCreateDeleteViewSet(
     viewsets.GenericViewSet
 ):
 
-    pass 
+    pass

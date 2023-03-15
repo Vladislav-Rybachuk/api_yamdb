@@ -3,16 +3,10 @@ from rest_framework import permissions, status
 
 
 class IsAdminOrReadOnlyPermission(permissions.BasePermission):
-    def has_permission(self, request, veiw):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        elif request.user.is_authenticated:
-            if request.user.is_admin or request.user.is_superuser:
-                return True
-            else:
-                return False
-        else:
-            return False
+    def has_permission(self, request, view):
+        return (request.method in permissions.SAFE_METHODS
+                or request.user.is_authenticated
+                and (request.user.is_admin or request.user.is_superuser))
 
 
 class IsAdminModeratorAuthorPermission(permissions.BasePermission):

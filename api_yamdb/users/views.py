@@ -1,19 +1,20 @@
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework import status
-from rest_framework import viewsets
+
 from rest_framework import filters
 from rest_framework import permissions
+from rest_framework import status
+from rest_framework import viewsets
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+
 from .models import User
 from .permissions import IsAdministator
-from users.serializers import (SignUpUserSerializer,
-                               GetJwtTokenSerializer,
+from users.serializers import (GetJwtTokenSerializer, SignUpUserSerializer,
                                UserSerializer)
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from rest_framework.exceptions import MethodNotAllowed
 
 
 account_activation_token = PasswordResetTokenGenerator()

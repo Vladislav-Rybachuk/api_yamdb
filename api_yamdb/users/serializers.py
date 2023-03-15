@@ -1,8 +1,14 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
-from .models import User, ROLES
+from .models import User
 import re
 
+
+ROLES = (
+    ('user', 'user'),
+    ('moderator', 'moderator'),
+    ('admin', 'admin'),
+)
 
 class SignUpUserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150, required=True)

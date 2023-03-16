@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+from django.db.models import Q
+
 from .models import User
 import re
 
@@ -18,7 +20,7 @@ class SignUpUserSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=150, required=False)
     last_name = serializers.CharField(max_length=150, required=False)
     role = serializers.ChoiceField(choices=ROLES,
-                                   default='user',
+                                   default=ROLES[1][0],
                                    required=False,
                                    write_only=True)
     bio = serializers.CharField(required=False)
@@ -31,10 +33,9 @@ class SignUpUserSerializer(serializers.Serializer):
         if data.get('username') == 'me':
             raise serializers.ValidationError(
                 'Имя пользователя не может быть me')
-
-        if (User.objects.filter(email=data.get('email')).exists()
-                and User.objects.filter(
-                username=data.get('username')).exists()):
+        
+        query = Q(email=data.get('email')) & Q(username=data.get('username'))
+        if User.objects.filter(query).exists():
             return data
 
         if User.objects.filter(email=data.get('email')).exists():

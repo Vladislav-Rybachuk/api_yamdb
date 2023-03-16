@@ -73,7 +73,10 @@ class TitlePostSerializer(serializers.ModelSerializer):
 
     def validate_year(self, value):
         current_year = timezone.now().year
-        if 0 < value > current_year:
+        if value > current_year:
             raise serializers.ValidationError(
                 'Произведение не может быть из будущего')
+        if value < 0:
+            raise serializers.ValidationError(
+                'Год не должен быть отрицательным')
         return value

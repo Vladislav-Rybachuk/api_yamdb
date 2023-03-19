@@ -6,13 +6,14 @@ from rest_framework import filters
 from rest_framework import permissions
 from rest_framework import status
 from rest_framework import viewsets
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from api_yamdb.settings import SYSTEM_EMAIL
 from .models import User
-from .permissions import IsAdministator
+from .permissions import IsAdministator, AllowedForMe
 from users.serializers import (GetJwtTokenSerializer, SignUpUserSerializer,
                                UserSerializer)
 
@@ -39,13 +40,15 @@ def sign_up_user(request):
         email = request.data.get('email')
 
         if User.objects.filter(username=username, email=email).exists():
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            current_user = User.objects.get(username=username, email=email)
+        else:
+            current_user = User.objects.create_user(username=username,
+                                                    email=email)
 
-        current_user = User.objects.create_user(username=username, email=email)
         confirm_code = account_activation_token.make_token(current_user)
         send_mail('Confirmation of registration',
                   f'your code: {confirm_code}',
-                  'yamdb@ya.ru',
+                  SYSTEM_EMAIL,
                   [email],
                   fail_silently=False,)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -78,25 +81,42 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
 
+    @action(detail=False, methods=['get', 'delete', 'patch'], url_path='me')
+    def me(self, request):
+
+        if self.request.method == 'GET':
+            serializer = self.get_serializer(self.request.user, many=False)
+            return Response(serializer.data)
+
+        if self.request.method == 'PATCH':
+            serializer = self.get_serializer(
+                request.user,
+                data=request.data,
+                partial=True)
+            if serializer.is_valid():
+                if (serializer.instance.role != self.request.data.get('role')):
+                    serializer.save(role=serializer.instance.role)
+                    return Response(serializer.data)
+                else:
+                    serializer.save()
+                    super(UserViewSet, self).perform_update(serializer)
+
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if self.request.method == 'DELETE':
+            raise MethodNotAllowed('DELETE')
+
     def get_object(self):
         username = self.kwargs.get('username')
         if self.request.method == 'PUT':
             raise MethodNotAllowed('PUT')
 
-        if username == 'me' and (self.request.method == 'GET'
-                                 or self.request.method == 'PATCH'):
-            return self.request.user
-
-        if username == 'me' and self.request.method == 'DELETE':
-            raise MethodNotAllowed('DELETE')
         current_user = get_object_or_404(User, username=username)
         return current_user
 
-    def perform_update(self, serializer):
-        username = self.kwargs.get('username')
+    def get_permissions(self):
+        if self.action == 'me':
+            return (AllowedForMe(), permissions.IsAuthenticated())
 
-        if (username == 'me'
-                and serializer.instance.role != self.request.data.get('role')):
-            serializer.save(role=serializer.instance.role)
-        else:
-            super(UserViewSet, self).perform_update(serializer)
+        return super().get_permissions()

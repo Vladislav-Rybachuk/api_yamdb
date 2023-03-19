@@ -6,12 +6,6 @@ from .models import User
 import re
 
 
-ROLES = (
-    ('user', 'user'),
-    ('moderator', 'moderator'),
-    ('admin', 'admin'),
-)
-
 class SignUpUserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150, required=True)
     email = serializers.EmailField(allow_blank=False,
@@ -19,8 +13,8 @@ class SignUpUserSerializer(serializers.Serializer):
                                    required=True)
     first_name = serializers.CharField(max_length=150, required=False)
     last_name = serializers.CharField(max_length=150, required=False)
-    role = serializers.ChoiceField(choices=ROLES,
-                                   default=ROLES[1][0],
+    role = serializers.ChoiceField(choices=User.ROLES,
+                                   default=User.ROLES[1][0],
                                    required=False,
                                    write_only=True)
     bio = serializers.CharField(required=False)
@@ -33,7 +27,7 @@ class SignUpUserSerializer(serializers.Serializer):
         if data.get('username') == 'me':
             raise serializers.ValidationError(
                 'Имя пользователя не может быть me')
-        
+
         query = Q(email=data.get('email')) & Q(username=data.get('username'))
         if User.objects.filter(query).exists():
             return data

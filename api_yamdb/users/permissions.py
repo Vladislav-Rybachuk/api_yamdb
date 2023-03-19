@@ -18,6 +18,10 @@ class IsAdminorSuperuserPermission(permissions.BasePermission):
 class IsAdministator(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        return (view.kwargs.get('username') == 'me'
-                or request.user.is_admin
-                or request.user.is_superuser)
+        return request.user.is_admin or request.user.is_superuser
+
+
+class AllowedForMe(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return request.method in ['GET', 'PATCH', 'DELETE']

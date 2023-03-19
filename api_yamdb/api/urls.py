@@ -24,5 +24,5 @@ router_v1.register('categories', CategoryViewSet, basename='category')
 router_v1.register('titles', TitleViewSet, basename='titles')
 
 urlpatterns = [
-    path('v1/', include(router_v1.urls)),
+    path('', include(router_v1.urls)),
 ]

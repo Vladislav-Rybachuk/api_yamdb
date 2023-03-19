@@ -1,14 +1,12 @@
 from pathlib import Path
 import os
-from dotenv import load_dotenv
 from datetime import timedelta
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-load_dotenv()
-
+# Оставлен для работоспособности у соразработчиков.
 SECRET_KEY = 'p&l%385148kslhtyn^##a1)ilz@4zqj=rq&agdol^##zgl9(vs'
 SYSTEM_EMAIL = 'yamdb@ya.ru'
 

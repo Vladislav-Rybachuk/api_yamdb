@@ -15,7 +15,7 @@ class Command(BaseCommand):
             help="django app name that the model is connected to")
 
     def handle(self, *args, **kwargs):
-        model_name = eval(kwargs['model_name'])
+        model_name = (kwargs['model_name'])
         model_name.objects.all().delete()
         file_path = kwargs['path']
         _model = apps.get_model(kwargs['app_name'], kwargs['model_name'])

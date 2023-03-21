@@ -14,10 +14,10 @@ class SignUpUserSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=150, required=False)
     last_name = serializers.CharField(max_length=150, required=False)
     role = serializers.ChoiceField(choices=User.ROLES,
-                                   default=User.ROLES[1][0],
+                                   default=User.ADMIN,
                                    required=False,
                                    write_only=True)
-    bio = serializers.CharField(required=False)
+    bio = serializers.CharField(required=False, max_length=10000)
 
     def validate(self, data):
         if (re.match(r"^[\w.@+-]+\Z", data.get('username'))) is None:

@@ -10,8 +10,7 @@ from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from api_yamdb.settings import SYSTEM_EMAIL
+from django.conf import settings
 from .models import User
 from .permissions import IsAdministator, AllowedForMe
 from users.serializers import (GetJwtTokenSerializer, SignUpUserSerializer,
@@ -48,7 +47,7 @@ def sign_up_user(request):
         confirm_code = account_activation_token.make_token(current_user)
         send_mail('Confirmation of registration',
                   f'your code: {confirm_code}',
-                  SYSTEM_EMAIL,
+                  settings.SYSTEM_EMAIL,
                   [email],
                   fail_silently=False,)
         return Response(serializer.data, status=status.HTTP_200_OK)

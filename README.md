@@ -5,48 +5,45 @@
 [![Pytest](https://img.shields.io/badge/Pytest-464646?style=flat-square&logo=pytest)](https://docs.pytest.org/en/6.2.x/)
 [![Postman](https://img.shields.io/badge/Postman-464646?style=flat-square&logo=postman)](https://www.postman.com/)
 
-# Описание
+# Description
 
-Проект YaMDb собирает отзывы пользователей на произведения. 
-Произведения делятся на категории, такие как «Книги», «Фильмы», «Музыка». 
-Произведению может быть присвоен жанр из списка предустановленных.
-Пользователи оставляют к произведениям текстовые отзывы и ставят 
-произведению оценку в диапазоне от одного до десяти.
-Пользователи могут оставлять комментарии к отзывам.
+The YaMDb project collects user feedback on titles.
+The titles are divided into categories such as "Books", "Films", "Music".
+A title can be assigned a genre from the preset list.
+Users leave text reviews for titles and rate the title in the range from one to ten.
+Users can leave comments on reviews.
 
-# Категории пользователей
+# User categories
 
-Пользователи делятся на 5 категорий:
+Users are divided into 5 categories:
 
-- Суперюзер - SuperUser
-- Админ - Admin
-- Модератор - Moderator
-- Авторизованный пользователь - User (присваивается всем новым пользователям)
-- Неавторизованный пользователь - UnauthUser
+- SuperUser
+- Admin
+- Moderator
+- User (the category is assigned to all new users)
+- UnauthUser
 
-# Права пользователей
+# User rights
 
 **UnauthUser:**
-* Просмотр описания произведений, чтение отзывов и комментариев.
+* View descriptions of titles, read reviews and comments.
     
 **User:** 
-* Просмотр описания произведений, чтение отзывов и комментариев.
-* Публикация отзывов, комментариев.
-* Редактирование/удаление своих отзывов/комментариев.
+* View descriptions of titles, read reviews and comments.
+* Publication of reviews, comments.
+* Editing / deleting your reviews / comments.
     
 **Moderator:**
-* Просмотр описания произведений, чтение отзывов и комментариев.
-* Публикация отзывов, комментариев.
-* Редактирование/удаление ВСЕХ отзывов/комментариев.
+* View descriptions of titles, read reviews and comments.
+* Publication of reviews, comments.
+* Edit/delete ALL reviews/comments.
 
 **SuperUser/Admin:**
-* Полные права на все действия.
+* Full rights to all actions.
 
-# Функционал
+# Installation:
 
-# Установка:
-
-Клонировать репозиторий и перейти в него в командной строке:
+Clone the repository and change into it on the command line:
 
 ```
 git clone https://github.com/Vladislav-Rybachuk/api_yamdb.git
@@ -55,19 +52,19 @@ git clone https://github.com/Vladislav-Rybachuk/api_yamdb.git
 ```
 cd api_yamdb
 ```
-Cоздать и активировать виртуальное окружение:
+Create and activate virtual environment:
 
 ```
 python -m venv env
 ```
 
-* Если у вас Linux/macOS
+* If you have Linux/macOS
 
     ```
     source env/bin/activate
     ```
 
-* Если у вас windows
+* If you have windows
 
     ```
     source env/scripts/activate
@@ -77,20 +74,20 @@ python -m venv env
 python3 -m pip install --upgrade pip
 ```
 
-Установить зависимости:
+Install dependencies:
 
    ```
    python3 -m pip install --upgrade pip
    pip install -r requirements.txt
    ```
 
-Выполнить миграции:
+Run migrations:
 
 ```
 python3 manage.py migrate
 ```
 
-Запустить проект:
+Run project:
 
 ```
 python3 manage.py runserver
